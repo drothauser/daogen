@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+  Spring DAO layer.
+
+  Copyright (c) 2016 Rothsmith, LLC, All rights reserved.
+
+  Created by GenerateDao on May 10, 2016 12:15:25 PM
+  Template used: spring/dao.vm
+  Author: drothauser
+
+-->
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xmlns:context="http://www.springframework.org/schema/context"
+		xmlns:aop="http://www.springframework.org/schema/aop"
+		xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="
+			http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.1.xsd
+			http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.1.xsd
+			http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.1.xsd
+			http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.1.xsd">
+
+    <bean id="presidentDao" class="com.rothsmith.dao.spring.NamedParamJdbcTemplateDao">
+        <constructor-arg value ="com.fcci.president.PresidentDto"/>
+        <property name="dataSource" ref="dataSource"/>
+        <property name="statementMap">
+            <map>
+                <entry key="selectMaxStateId" value="select ID , FIRSTNAME , LASTNAME , STATE_ID , PARTY_ID , INAUGURATED_YEAR , YEARS from TEST.PRESIDENT where STATE_ID = (select max(STATE_ID) from PRESIDENT)" />
+                <entry key="selectMaxId" value="select ID , FIRSTNAME , LASTNAME , STATE_ID , PARTY_ID , INAUGURATED_YEAR , YEARS from TEST.PRESIDENT where ID = (select max(ID) from PRESIDENT)" />
+                <entry key="select" value="select ID , FIRSTNAME , LASTNAME , STATE_ID , PARTY_ID , INAUGURATED_YEAR , YEARS from TEST.PRESIDENT where ID=:id and STATE_ID=:stateId" />
+                <entry key="insert" value="insert into TEST.PRESIDENT ( FIRSTNAME , LASTNAME , STATE_ID , PARTY_ID , INAUGURATED_YEAR , YEARS ) values ( :firstname , :lastname , :stateId , :partyId , :inauguratedYear , :years )" />
+                <entry key="update" value="update TEST.PRESIDENT set FIRSTNAME =:firstname , LASTNAME =:lastname , PARTY_ID =:partyId , INAUGURATED_YEAR =:inauguratedYear , YEARS =:years where ID=:id and STATE_ID=:stateId" />
+                <entry key="deleteTeardownId" value="delete from TEST.PRESIDENT where ID > :id" />
+                <entry key="deleteTeardownStateId" value="delete from TEST.PRESIDENT where STATE_ID > :stateId" />
+                <entry key="delete" value="delete from TEST.PRESIDENT where ID=:id and STATE_ID=:stateId" />
+            </map>
+        </property>
+    </bean>
+</beans>

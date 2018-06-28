@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+
+<tools>
+
+	<toolbox scope="application">
+		<tool key="DateTool" />
+		<tool class="org.apache.velocity.tools.generic.DateTool" />
+	</toolbox>
+
+	<toolbox scope="application">
+		<tool key="WordUtils" />
+		<tool class="org.apache.commons.lang3.text.WordUtils" />
+	</toolbox>
+
+	<toolbox scope="application">
+		<tool key="StringUtils" />
+		<tool class="org.apache.commons.lang3.StringUtils" />
+	</toolbox>
+
+	<toolbox scope="application">
+		<tool key="BooleanUtils" />
+		<tool class="org.apache.commons.lang3.BooleanUtils.BooleanUtils()" />
+	</toolbox>
+
+</tools>

@@ -1,0 +1,613 @@
+## = = = = = = = = = = = = = = = 
+##    DAO Junit source template
+## = = = = = = = = = = = = = = = 
+/*
+ * (c) $DateTool.get('yyyy') Rothsmith, LLC, All Rights Reserved
+ */
+package $daoCfgMetaData.getTestPackageName();
+##
+## Use for $ literal
+##
+#set($D = '$')
+##
+## Use for brace literals i.e. {}
+##
+#set($OB = '{')
+#set($CB = '}')
+##
+## Comment line separators for word wrap
+##
+#set ($commentSepClass = ${lineSeparator} + " * ")
+#set ($commentSepMethod = ${lineSeparator} + "	 * ")
+#set ($methodCommentSeparator = ${lineSeparator} + "    ")
+#set ($junitClassName = "$daoCfgMetaData.getClassName()Test")
+#set ($daoVarName = "$daoCfgMetaData.getClassName().substring(0,1).toLowerCase()$daoCfgMetaData.getClassName().substring(1)")
+#set ($dtoClassName = "$daoCfgMetaData.getDtoClassMetaData().getClassName()")
+#set ($dtoVarName = "$dtoClassName.substring(0,1).toLowerCase()$dtoClassName.substring(1)")
+#set ($dtoListVarName = "${dtoVarName}s")
+#set ($dtoClassMetaData = $daoCfgMetaData.getDtoClassMetaData())
+#set ($tableName = "$StringUtils.substringBeforeLast($daoCfgMetaData.getClassName().toLowerCase(),'dao')")
+##
+## Get method metadata list and field metadata list
+##
+#set($dtoMethodMetaDataList = $dtoClassMetaData.getDtoMethodMetaDataList())
+#set($colMetaDataList = $dtoClassMetaData.getColMetaDataList())
+#set($hasPk = $pkMetaData.size() > 0)
+#if(!$hasPk)
+#foreach($dtoMethodMetaData in $dtoMethodMetaDataList)
+	#set ($column = $dtoMethodMetaData.getColumnMetaData().getColumnName().toLowerCase())
+	#if($column == 'value')
+		#set($hasValue = true)
+	#elseif($column.toLowerCase().endsWith('id') && $hasId == false)
+		#set($hasId = true)
+		#set ($idColumn = $StringUtils.capitalize($column))	   
+		#set ($idColumnJavaName = $dtoMethodMetaData.getMethodName())
+		#set ($idColumnType = $dtoMethodMetaData.getClassTypeName())
+	#end   
+#end
+#end
+
+##
+## Build import list
+##
+#foreach($packageName in $dtoClassMetaData.getPackageMap())
+import $packageName;
+#end
+import java.io.*;
+import java.util.*;
+import java.util.Map.Entry;
+import java.sql.*;
+import static org.junit.Assert.*;
+
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import javax.sql.DataSource;
+
+import org.apache.commons.dbcp.BasicDataSource;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang.time.DateUtils;
+import org.apache.commons.io.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.annotation.Rollback;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.transaction.TransactionConfiguration;
+import org.springframework.transaction.annotation.Transactional;
+import org.unitils.database.DatabaseUnitils;
+
+import $daoCfgMetaData.getPackageName().$dtoClassName;
+import com.rothsmith.dao.spring.NamedParamJdbcTemplateDao;
+
+/**
+ * Test for the $daoVarName generic DAO (Spring bean).
+ * 
+ * @author $daoCfgMetaData.getUser()
+ * 
+ */
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(locations = "/applicationContext.xml")
+// CHECKSTYLE:OFF Annotations don't wrap
+@TransactionConfiguration(transactionManager = "transactionManager", defaultRollback = false)
+// CHECKSTYLE:ON
+@Transactional
+public class $junitClassName {
+
+	/**
+	 * Logger for $junitClassName.	 
+	 */
+	private static final Logger LOGGER =
+		LoggerFactory.getLogger(${junitClassName}.class);
+		
+	/**
+	 * JDBC data source.
+	 */
+	private static BasicDataSource dataSource;
+
+	/**
+	 * $daoVarName Spring DAO bean.
+	 */
+	@Autowired
+	private NamedParamJdbcTemplateDao<$dtoClassName, $dtoClassName> $daoVarName;
+	
+	/**
+	 * Stub {@link $dtoClassName} object.
+	 */
+	private $dtoClassName stubDto;
+
+	/**
+	 * Create database objects for testing.
+	 * 
+	 * @throws IOException
+	 *             possible problem loading the properties file
+	 * @throws SQLException
+	 *             possible SQL error
+	 */
+	@BeforeClass
+	public static void setUpBeforeClass() 
+		throws IOException, SQLException, NamingException {
+		
+		Properties props = new Properties();
+		String propsFile = "$propsFile";
+		InputStream inputStream = Thread.currentThread().getContextClassLoader()
+		    .getResourceAsStream(propsFile);
+
+		if (inputStream != null) {
+			props.load(Thread.currentThread().getContextClassLoader()
+			    .getResourceAsStream(propsFile));
+			
+			// ctx.rebind(jdbcSubcontext + dbAlias, dataSource);
+			#if(${jndiName})
+			System.setProperty(Context.INITIAL_CONTEXT_FACTORY,
+			"org.osjava.sj.memory.MemoryContextFactory");
+			System.setProperty("org.osjava.sj.jndi.shared", "true");
+			InitialContext ctx = new InitialContext();
+			DataSource dataSource = DatabaseUnitils.getDataSource();
+			ctx.rebind("${jndiName}", dataSource); 
+			#else			
+			dataSource = new BasicDataSource();
+			dataSource.setUrl(props.getProperty("database.url"));
+			dataSource.setUsername(props.getProperty("database.userName"));
+			dataSource.setPassword(props.getProperty("database.password"));
+			dataSource.setDriverClassName(props.getProperty("database.driverClassName"));
+			#end	
+			try (Connection conn = dataSource.getConnection()) {
+	
+				String createSql = fetchSql(props, "db.create.sql");
+	
+				String populateSql = fetchSql(props, "db.populate.sql");
+	
+				String initSql = createSql + populateSql;
+	
+				if (!"".equals(initSql)) {
+				String[] sqlStmts = initSql.split("(?<!\\-{2}.{0,100});");
+					for (String sql : sqlStmts) {
+						try (Statement stmt = conn.createStatement()) {
+							LOGGER.info(String.format("%nExecuting %s", sql));
+							stmt.executeUpdate(sql);
+							LOGGER.info("\nDone!");
+						} catch (SQLException e) {
+							String msg =
+							    String
+							        .format(
+							            "Initialization error running SQL statement: %s: %s",
+							            sql, e);
+							LOGGER.error(msg, e);
+							fail("Initialization error running SQL statements: "
+							    + e.getMessage());
+						}
+					}
+				}
+			}
+		}
+	}
+	
+	/**
+	 * Method to read the sql files specified in the given property of the
+	 * properties file and concatenate their contents into a string.
+	 * 
+	 * @param props
+	 *            {@link Properties} object that contains sql parameters
+	 * @param sqlProperty
+	 *            Name of the property in the property file that contains names
+	 *            of SQL files.
+	 * @return String containing the contents of all the SQL files
+	 * @throws IOException
+	 *             thrown if there is problem accessing a SQL file
+	 */
+	private static String fetchSql(Properties props, String sqlProperty)
+	        throws IOException {
+
+		String sqlFileNames = StringUtils.defaultString(props.getProperty(sqlProperty));
+
+		StringBuilder sb = new StringBuilder();
+
+		for (String sqlFileName : StringUtils.split(
+		    StringUtils.deleteWhitespace(sqlFileNames), ',')) {
+
+			String sql =
+			    StringUtils.trim(IOUtils.toString(Thread.currentThread()
+			        .getContextClassLoader().getResource(sqlFileName)));
+
+			sb.append(sql);
+
+		}
+
+		return sb.toString();
+
+	}
+
+	/**
+	 * Initializes the $daoCfgMetaData.getClassName() bean from the Spring context.
+	 * 
+	 * @throws java.lang.Exception
+	 *             possible exception
+	 */
+	@Before
+	public final void setUp() throws Exception {	
+
+		stubDto = createStubDto();
+#if (!$statementMap)	
+
+		#if ($hasId)stubDto.set${idColumnJavaName}(fetchMaxId());#end
+		
+#foreach($value in $pkMetaData.values())
+	#foreach($dtoMethodMetaData in $dtoMethodMetaDataList)		
+		#set($colName=$dtoMethodMetaData.getColumnMetaData().getColumnName())		
+		#if($value.getColumnName() == $colName)
+			#set($isAutoIncrement=$dtoMethodMetaData.getColumnMetaData().getAutoIncrement())
+			#set($type=$dtoMethodMetaData.getClassTypeName())
+			#set($methodName=$dtoMethodMetaData.getMethodName())
+			
+			## stubDto.set${methodName}(fetchMax${methodName}().get${methodName}());
+			
+			#if($type=='java.math.BigDecimal')
+				#if($isAutoIncrement)
+				BigDecimal maxId = fetchMax${methodName}().get${methodName}();
+				#else
+				BigDecimal maxId = fetchMax${methodName}().get${methodName}().add(BigDecimal.ONE);
+				#end
+			#elseif($type=='java.lang.Integer')
+				#if($isAutoIncrement)
+				Integer maxId = fetchMax${methodName}().get${methodName}();
+				#else 
+				Integer maxId =	fetchMax${methodName}().get${methodName}() + 1;
+				#end
+			#elseif($type=='java.sql.Timestamp')
+				#if($isAutoIncrement)
+				Timestamp maxId = fetchMax${methodName}().get${methodName}();
+				#else 
+				Timestamp maxId = new Timestamp(DateUtils.addDays(fetchMax${methodName}(), 1).getTime());
+				#end				
+			#elseif($type=='oracle.sql.ROWID')
+
+			// No need to set ${methodName}. It's a $type. 
+			#else
+			##stubDto.set${methodName}(fetchMax${methodName}());
+			##stubDto.set${methodName}(fetchMax${methodName}().get${methodName}());
+			Object maxId = fetchMax${methodName}().get${methodName}();
+			#end
+			
+			stubDto.set${methodName}(maxId);
+
+		#end
+	#end
+	#break
+#end
+				
+		int numRecs = ${daoVarName}.insert(stubDto);
+
+		assertEquals("Expected number of records inserted to be 1", 1,
+				numRecs);
+
+#foreach($value in $pkMetaData.values())
+	#foreach($dtoMethodMetaData in $dtoMethodMetaDataList)		
+		#set($colName=$dtoMethodMetaData.getColumnMetaData().getColumnName())		
+		#if($value.getColumnName() == $colName)
+			#set($isAutoIncrement=$dtoMethodMetaData.getColumnMetaData().getAutoIncrement())
+			#set($type=$dtoMethodMetaData.getClassTypeName())
+			#set($methodName=$dtoMethodMetaData.getMethodName())
+			#if($type=='oracle.sql.ROWID' || (($type=='java.math.BigDecimal' || $type=='java.lang.Integer' || $type=='java.sql.Timestamp') && $isAutoIncrement))
+			stubDto = fetchMax${methodName}();
+			#end
+		#end
+	#end
+	#break
+#end
+#*
+#foreach($value in $pkMetaData.values())
+	#foreach($dtoMethodMetaData in $dtoMethodMetaDataList)		
+		#set($colName=$dtoMethodMetaData.getColumnMetaData().getColumnName())		
+		#if($value.getColumnName() == $colName)
+			#set($isAutoIncrement=$dtoMethodMetaData.getColumnMetaData().getAutoIncrement())
+			#set($type=$dtoMethodMetaData.getClassTypeName())
+			#set($methodName=$dtoMethodMetaData.getMethodName())
+			#if($type=='oracle.sql.ROWID' || (($type=='java.math.BigDecimal' || $type=='java.lang.Integer' || $type=='java.sql.Timestamp') && $isAutoIncrement))
+				stubDto.set${methodName}(fetchMax${methodName}());
+			#end			
+		#end
+	#end
+#end
+*#
+
+#end
+	}
+
+
+
+	/**
+	 * Stub up a {@link $dtoClassName} object.
+	 * 
+	 * @return a $dtoClassName object populated with test data.
+	 */
+	private $dtoClassName createStubDto() {
+	
+		$dtoClassName ${dtoVarName} = new $dtoClassName();
+#set($setters = "#stubDto($pkMetaData $dtoMethodMetaDataList)")
+#set($BS = '\')
+#set($settersFormatted = $setters.replaceAll("^${BS}s+","${lineSeparator}\\u0009\\u0009"))
+$settersFormatted
+		return ${dtoVarName};
+
+	}
+
+#if (!$statementMap)	
+
+	/**
+	 * Test updating a $tableName record.
+	 */
+	@Test
+	@Rollback(true)
+	public final void testUpdate() {
+		
+#if($pkMetaData.size() > 0)
+		$dtoClassName params = new $dtoClassName();
+#set($setters = "#keySetter($pkMetaData $dtoMethodMetaDataList)")
+#set($BS = '\')
+#set($settersFormatted = $setters.replaceAll("${BS}s+","${lineSeparator}\\u0009\\u0009"))
+$settersFormatted
+#elseif ($hasId)
+#set($setters = "#keySetter($pkMetaData $dtoMethodMetaDataList)")
+#set($BS = '\')
+#set($settersFormatted = $setters.replaceAll("${BS}s+","${lineSeparator}\\u0009\\u0009"))
+$settersFormatted
+#else
+		// TODO - Table has no primary key or ID column. You must set your own criteria.
+		$dtoClassName params = stubDto;
+#end
+		
+		List<$dtoClassName> ${dtoListVarName} = ${daoVarName}.select(params);
+
+		$dtoClassName ${dtoVarName} = ${dtoListVarName}.get(0);
+		// Alter a field value:
+		// ${dtoVarName}.set...
+
+		int numRecs = ${daoVarName}.update(${dtoVarName});
+
+#if($pkMetaData.size() > 0 || $hasId )
+		assertEquals("Expected number of records updated to = 1", 1, numRecs);
+#else
+		assertTrue("Expected number of records updated to be > 0", numRecs > 0);
+#end
+
+
+	}
+	
+	/**
+	 * Test deleting a $tableName record.
+	 */
+	@Test
+	@Rollback(true)
+	public final void testDelete() {
+
+		$dtoClassName params = new $dtoClassName();
+		
+#if($pkMetaData.size() > 0)
+#set($setters = "#keySetter($pkMetaData $dtoMethodMetaDataList)")
+#set($BS = '\')
+#set($settersFormatted = $setters.replaceAll("${BS}s+","${lineSeparator}\\u0009\\u0009"))
+$settersFormatted
+#elseif ($hasId)
+#set($setters = "#keySetter($pkMetaData $dtoMethodMetaDataList)")
+#set($BS = '\')
+#set($settersFormatted = $setters.replaceAll("${BS}s+","${lineSeparator}\\u0009\\u0009"))
+$settersFormatted
+#else
+		// TODO - Table has no primary key or ID column. You must set your own criteria.
+		params = stubDto;
+#end
+		
+		int numRecs = ${daoVarName}.delete(params);
+
+#if($pkMetaData.size() > 0 || $hasId )
+		assertEquals("Expected number of records updated to = 1", 1, numRecs);
+#else
+		assertTrue("Expected number of records updated to be > 0", numRecs > 0);
+#end
+
+	}
+
+#if ($hasValue)
+	/**
+	 * Test selecting a value from the ${tableName} table.
+	 */
+	@Test
+	@Rollback(true)
+	public final void testSelectByValue() {
+
+		$dtoClassName params = new $dtoClassName();
+		
+	String testValue = "test-value";
+		params.setValue(testValue);
+
+		String statementKey = "selectByValue";
+		List<$dtoClassName> $dtoListVarName =
+			${daoVarName}.select(statementKey, params);
+
+		if ($dtoListVarName != null && ${dtoListVarName}.size() == 1) {
+			$dtoClassName ${dtoVarName} = ${dtoListVarName}.get(0);
+			if (LOGGER.isDebugEnabled()) {
+				LOGGER.debug("Selected = " + ${dtoVarName}.toString());
+			}
+			assertTrue("Expected value field to contain " + testValue,
+					StringUtils.containsIgnoreCase(${dtoVarName}.getValue(),
+							testValue));
+		} else {
+			String recs =
+				(${dtoListVarName} == null) ? "null" : Integer
+					.toString(${dtoListVarName}.size());
+			fail("Expected " + statementKey
+				+ " to return 1 record but it returned " + recs);
+		}
+
+	}
+#end
+   
+#if ($pkMetaData.size() > 0)
+	/**
+	 * Test select by primary key from ${tableName}.
+	 */
+	@Test
+	@Rollback(true)
+	public final void testSelectByPrimaryKey() {
+
+		$dtoClassName params = new $dtoClassName();
+		
+		$StringUtils.replace($StringUtils.replace($StringUtils.replaceChars("#keySetter($pkMetaData $dtoMethodMetaDataList)","\\u0009",''),"$lineSeparator","${lineSeparator}\\u0009\\u0009"),'\',"")
+		List<$dtoClassName> ${dtoListVarName} = ${daoVarName}.select(params);
+	
+		if (${dtoListVarName} != null && ${dtoListVarName}.size() == 1) {
+			$dtoClassName ${dtoVarName} = ${dtoListVarName}.get(0);
+			if (LOGGER.isDebugEnabled()) {
+				LOGGER.debug("Selected = " + ${dtoVarName}.toString());
+			}
+		} else {
+			fail("Expected select to return 1 record");
+		}
+	
+	}
+#end
+
+    #if ($hasId)
+/**
+	 * Fetch the maximum id from ${tableName}.
+	 *
+	 * @return the maximum ${idColumn} value
+	 */
+	private ${idColumnType} fetchMaxId() {
+	
+		$dtoClassName params = new $dtoClassName();
+	
+	#if (${idColumnType} == "java.math.BigDecimal") #set ($returnZero = 'BigDecimal.ZERO')
+	#elseif (${idColumnType} == "java.lang.String") #set ($returnZero = '"0"')
+	#elseif (${idColumnType} == "java.lang.Integer") #set ($returnZero = 'Integer.valueOf(0)')
+	#else #set ($returnZero = '"0"')
+	#end
+
+		List<$dtoClassName> ${dtoListVarName} =
+			${daoVarName}.selectByStatement("selectMaxId", params);
+
+		return ${dtoListVarName} != null && ${dtoListVarName}.size() == 1
+		? ${dtoListVarName}.get(0).get${idColumnJavaName}()
+		: $returnZero;
+
+	}
+    #end
+
+#foreach($value in $pkMetaData.values())
+	#foreach($dtoMethodMetaData in $dtoMethodMetaDataList)
+		#set($colName=$dtoMethodMetaData.getColumnMetaData().getColumnName())
+		#if($value.getColumnName() == $colName)
+			#set($pkColType=$dtoMethodMetaData.getClassTypeName())
+			#set($methodName=$dtoMethodMetaData.getMethodName())
+
+/**
+	 * Fetch the maximum $colName from ${tableName}.
+	 *
+	 * @return the $dtoClassName that contains the maximum $colName value.
+	 */
+	private $dtoClassName fetchMax${methodName}() {
+			List<$dtoClassName> ${dtoListVarName} =
+			${daoVarName}.selectByStatement("selectMax${methodName}");
+			
+			if (${dtoListVarName} .isEmpty()) {
+				throw new IllegalStateException(
+			    	"No results returned. Is the DB populated?");
+			}
+			
+			return ${dtoListVarName}.get(0);
+		}
+		#end
+	#end
+#end
+
+#end
+
+#foreach ($statementEntry in $statementMap.entrySet())
+	#set($stmtKey=$statementEntry.key)
+	#set($stmt=$statementEntry.value)    
+	/**
+	 * Test the following query:
+	 * <code>$stmt</code>
+	 */
+	@Test
+	@Rollback(true)
+	public final void test$StringUtils.capitalize(${stmtKey})() {
+
+		// TODO - Set parameter fields as needed.
+		$dtoClassName params = stubDto;
+
+		List<${dtoClassName}> $dtoListVarName = ${stmtKey}Dao.selectByStatement("$stmtKey", params);
+
+		assertTrue("Expected number of records updated to be > 0",
+		    ${dtoListVarName}.size() > 0);
+	
+	}
+    
+#end
+
+}
+
+
+#* = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+*                V e l o c i t y    M a c r o s
+* = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =*#
+#macro( keySetter $pkMetaData $dtoMethodMetaDataList )
+#foreach($value in $pkMetaData.values())
+	#foreach($dtoMethodMetaData in $dtoMethodMetaDataList)
+		#if($value.getColumnName() == $dtoMethodMetaData.getColumnMetaData().getColumnName())
+			#set($setter = "set$dtoMethodMetaData.getMethodName()")
+			params.${setter}(stubDto.get$dtoMethodMetaData.getMethodName()());
+		#end
+	#end
+#end
+#end
+
+#macro( stubDto $pkMetaData $dtoMethodMetaDataList )
+#foreach($dtoMethodMetaData in $dtoMethodMetaDataList)
+	#set($setter = "set$dtoMethodMetaData.getMethodName()")
+	#set($colMetaData = $dtoMethodMetaData.getColumnMetaData())
+	#set($classNameArr = $dtoMethodMetaData.getClassTypeName().split('\.'))
+	#set($classPos = $classNameArr.size() - 1)
+	#set($className = $classNameArr.get($classPos))	
+	#set($S = ' ')
+	#set($isID = $StringUtils.endsWith($dtoMethodMetaData.getMethodName().toLowerCase(),"id"))
+	
+	#if ($dtoMethodMetaData.getMethodName().toLowerCase() == 'value')
+	${dtoVarName}.${setter}("test-value");
+	#elseif ($colMetaData.getNullable() == "1")
+	${dtoVarName}.${setter}(null);
+	#elseif ($className == 'String')
+	${dtoVarName}.${setter}("~");
+	#elseif ($className == 'Integer')
+		#if($isID)
+			${dtoVarName}.${setter}(Integer.valueOf(1));
+		#else
+			${dtoVarName}.${setter}(new Random().nextInt(2100 - 1800) + 1800);
+		#end
+	#elseif ($className == 'Boolean')
+	${dtoVarName}.${setter}(false);
+	#elseif ($className == 'Timestamp')
+	${dtoVarName}.${setter}(new Timestamp(System.currentTimeMillis()));
+	#elseif ($className == 'Date')
+	${dtoVarName}.${setter}(new java.sql.Date(System.currentTimeMillis()));
+	#elseif ($className == 'Time')
+	${dtoVarName}.${setter}(new java.sql.Time(System.currentTimeMillis()));
+	#elseif ($className == 'BigDecimal')
+	${dtoVarName}.${setter}(BigDecimal.ONE);
+	#elseif ($className == 'InputStream')
+	${dtoVarName}.${setter}(new ByteArrayInputStream("test data".getBytes()));
+	#elseif ($className == 'ROWID')
+	// No need to set ROWID.
+	#else
+	${dtoVarName}.${setter}(new ${className}("1"));
+	#end
+#end
+#end

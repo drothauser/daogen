@@ -1,0 +1,272 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+  Generic DAO configuration.
+
+  Copyright (c) $DateTool.get('yyyy') Rothsmith, LLC, All rights reserved.
+
+  Created by GenerateDaoConfig on $DateTool
+
+-->
+<daos>
+	<vendor>$!vendor</vendor>
+    <output-dir>$!params.getOutputDir()</output-dir>
+    <test-output-dir>$!params.getTestOutputDir()</test-output-dir>
+    <test-package-name>$!params.getTestPackageName()</test-package-name>
+    <user>$!defMetaDataList.get(0).getUser()</user>
+    <props-file>$!params.getPropsFile()</props-file>
+     
+    <jdbc-url>$!params.getJdbcURL()</jdbc-url>
+    <jdbc-driver>$!params.getJdbcDriverClassName()</jdbc-driver>
+    <db-username>$!params.getDbUsername()</db-username>
+    <db-password>$!params.getDbPassword()</db-password>
+    
+    <dto-template>$!params.getDtoTemplate()</dto-template>
+    <junit-template>$params.getJunitTemplate()</junit-template>
+    
+    #if($params.getSpringAppCtxTemplate())<spring-app-ctx-template>$!params.getSpringAppCtxTemplate()</spring-app-ctx-template>#end
+ 
+    #if($params.getSpringAppCtxFile())<spring-app-ctxfile>$!params.getSpringAppCtxFile()</spring-app-ctxfile>#end
+
+    #if($params.getSpringDaoCtxTemplate())<spring-dao-ctx-template>$!params.getSpringDaoCtxTemplate()</spring-dao-ctx-template>#end
+   
+    #if($params.getSpringDaoCtxFile())<spring-dao-ctxfile>$!params.getSpringDaoCtxFile()</spring-dao-ctxfile>#end
+
+#foreach($defMetaData in $defMetaDataList)
+	
+	#set($tblMetaData=$defMetaData.getTblMetaData())
+	
+    <dao package="${defMetaData.getPackageName()}" classname="$defMetaData.getClassName().substring(0,1).toUpperCase()${defMetaData.getClassName().substring(1)}Dao">
+    	
+        <dto package="${defMetaData.getPackageName()}" classname="$defMetaData.getClassName().substring(0,1).toUpperCase()${defMetaData.getClassName().substring(1)}Dto">
+            <![CDATA[$defMetaData.getSqlStmt().replaceAll('\s+', ' ')]]>
+        </dto>
+        <sql>
+
+			<statement id="query${velocityCount}"><![CDATA[$defMetaData.getSqlStmt().replaceAll('\s+', ' ')]]></statement>
+		
+		</sql>
+	</dao>
+</daos>
+
+#end
+
+
+#* = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+*                V e l o c i t y    M a c r o s
+* = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =*#
+## = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+##       Macro to build the select statement.
+## = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+#macro (selectSQL $tblMetaData $defMetaData $includeWhere)
+#set($colEntries=$defMetaData.getColumnMap().entrySet())
+select 
+#foreach($colEntry in $colEntries)
+	#if($velocityCount > 0),#end
+	#set($colMetaData=$colEntry.getValue())	
+	#escapeCol($colMetaData.getColumnName() "forSelect")		
+#end
+from $tblMetaData.getTableSchem().$tblMetaData.getTableName()
+#if ($includeWhere)
+where #buildWhere($defMetaData)
+#end
+#end
+
+## = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+##       Macro to build the insert statement.
+## = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+#macro (insertSQL $tblMetaData $defMetaData)
+
+#set($colEntries=$defMetaData.getColumnMap().entrySet())
+insert into $tblMetaData.getTableSchem().$tblMetaData.getTableName() ( 
+#set($firstCol='true')
+#foreach($colEntry in $colEntries)
+	#set($colMetaData=$colEntry.getValue())
+	#if(!$BooleanUtils.toBoolean($colMetaData.IsAutoIncrement))
+	#if($firstCol=='true')#set($firstCol='false')#else,#end
+	#escapeCol($colMetaData.getColumnName())	
+	#end
+#end
+) values (
+#set($firstCol='true')
+#foreach($colEntry in $colEntries)
+	#set($colMetaData=$colEntry.getValue())
+	## dataType=1111 is oracle.sql.ROWID
+	#set($isRownum=($colMetaData.getDataType()==1111))
+	#if(!$BooleanUtils.toBoolean($colMetaData.IsAutoIncrement))
+		#if($firstCol=='true')#set($firstCol='false')#else,#end
+		#if($isRownum)
+		CHARTOROWID('AAABoqAADAAAAwPAAA')
+		#else
+		#set($paramName="#escapeParam($colMetaData.getColumnName())")
+		:$StringUtils.trim($StringUtils.uncapitalize($WordUtils.capitalizeFully($paramName,$delim).replaceAll("_", "")))
+		#end
+	#end
+#end
+)
+#end
+
+## = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+##       Macro to build the update statement.
+## = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+#macro (updateSQL $tblMetaData $defMetaData)
+
+#set($pkMap=$defMetaData.getPkMap())
+#set ($pkList = [])
+#pkCols($pkMap $pkList)
+
+update $tblMetaData.getTableSchem().$tblMetaData.getTableName() set  
+#set($colEntries=$defMetaData.getColumnMap().entrySet())
+#set($firstCol='true')
+#foreach($colEntry in $colEntries)
+	#set($colMetaData=$colEntry.getValue())
+	#set($colName="#escapeCol($colMetaData.getColumnName())")
+	#if(!$pkList.contains($colMetaData.getColumnName()))
+		#if($firstCol=='true')#set($firstCol='false')#else,#end
+		#set($paramName="#escapeParam($colMetaData.getColumnName())")
+		$colName=:$StringUtils.trim($StringUtils.uncapitalize($WordUtils.capitalizeFully($paramName,$delim).replaceAll("_", "")))
+	#end
+#end
+
+where #buildWhere($defMetaData)
+
+#end
+
+## = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+##       Macro to build the delete statement.
+## = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+#macro (deleteSQL $tblMetaData $defMetaData)
+
+#set($pkMap=$defMetaData.getPkMap())
+#set ($pkList = [])
+#pkCols($pkMap $pkList)
+
+delete from $tblMetaData.getTableSchem().$tblMetaData.getTableName() 
+where #buildWhere($defMetaData)
+ 
+#end
+
+## = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+##       Macro to build select max statements.
+## = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+#macro (selectMaxSQL $tblMetaData $defMetaData)
+#set($colEntries=$defMetaData.getColumnMap().entrySet())	
+#set($pkMap=$defMetaData.getPkMap())
+#set ($pkList = [])
+#pkCols($pkMap $pkList)
+#if ($pkList.size() > 0)
+	#foreach($pkCol in $pkList)
+		#set($pkColname=$WordUtils.capitalizeFully($pkCol,$delim).replaceAll("_", ""))
+		<statement id="selectMax${pkColname}"><![CDATA[#set($selectSQL = "#selectSQL($tblMetaData $defMetaData)")$selectSQL.replaceAll('\s+', ' ') where ${pkCol} = (select max(${pkCol}) from $tblMetaData.getTableName())]]></statement>
+	#end
+#end
+#end
+
+## = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+##       Macro to build teardown statements for JUnit tests.
+## = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+#macro (deleteTeardownSQL $tblMetaData $defMetaData)
+#set($colEntries=$defMetaData.getColumnMap().entrySet())	
+#set($pkMap=$defMetaData.getPkMap())
+#set ($pkList = [])
+#pkCols($pkMap $pkList)
+#if ($pkList.size() > 0)
+	#foreach($pkCol in $pkList)
+		#set($pkColname=$WordUtils.capitalizeFully($pkCol,$delim).replaceAll("_", ""))		
+		<statement id="deleteTeardown${pkColname}"><![CDATA[delete from $tblMetaData.getTableSchem().$tblMetaData.getTableName() where $pkCol > :$StringUtils.uncapitalize($WordUtils.capitalizeFully($pkCol,$delim).replaceAll("_", ""))]]></statement>
+	#end
+#end
+#end
+
+## = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+##       Macro to build WHERE clause.
+## = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+#macro( buildWhere $defMetaData )
+#set($colEntries=$defMetaData.getColumnMap().entrySet())	
+#set($hasId = false)
+#foreach($colEntry in $colEntries)
+	#set($colName=$colEntry.getValue().getColumnName())
+    #if($colName.toLowerCase().endsWith('id') && $hasId == false)
+		#set($hasId = true)
+    	#set($idCol = $colName)
+	#end
+	#if($velocityCount == 0)#set($firstCol=$colName)#end
+#end
+            
+#set($pkMap=$defMetaData.getPkMap())
+#set ($pkList = [])
+#pkCols($pkMap $pkList)
+#if ($pkList.size() > 0)
+	#foreach($pkCol in $pkList)
+		#if($velocityCount > 0)and#end
+		$pkCol=:$StringUtils.uncapitalize($WordUtils.capitalizeFully($pkCol,$delim).replaceAll("_", ""))
+	#end
+#elseif ($hasId)
+	$idCol=:$StringUtils.uncapitalize($WordUtils.capitalizeFully($idCol,$delim).replaceAll("_", "")) 
+#else
+	#set($idxMap=$defMetaData.getIndexMap())
+	#set ($idxList = [])
+	#idxCols($idxMap $idxList)
+	#set($idxLastColumnNo = $idxList.size() - 1)	
+	#if ($idxList.size() > 0)		
+		#foreach($idxCol in $idxList)
+			$idxCol=:$StringUtils.uncapitalize($WordUtils.capitalizeFully($idxCol,$delim).replaceAll("_", ""))
+			#if($velocityCount < $idxLastColumnNo)and#end
+		#end
+	#else
+		$firstCol=:$StringUtils.uncapitalize($WordUtils.capitalizeFully($firstCol,$delim).replaceAll("_", ""))
+	#end
+#end
+#end
+
+## = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+##       Macro to create a list of primary key columns.
+## = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+#macro( pkCols $pkMap $pkList)
+#foreach($entry in $pkMap.entrySet())
+	#set($pkMetaData=$entry.getValue())
+	#set ($discard = $pkList.add($pkMetaData.getColumnName()))
+#end
+#end
+
+## = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+##       Macro to create a list of index columns from the 
+##       first index of the table.
+## = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+#macro( idxCols $idxMap $idxList)
+#foreach($entry in $idxMap.entrySet())
+	#set($idxMetaDataList=$entry.getValue())
+	#foreach($idxMetaData in $idxMetaDataList)
+		#set($idxCol=$idxMetaData.getColumnName())
+		#if($idxCol && !$idxMetaData.isNonUnique())#set ($discard = $idxList.add($idxMetaData.getColumnName()))#end
+	#end
+	#break
+#end
+#end
+
+## = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+##       Macro to escape a column that is a SQL keyword.
+## = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+#macro( escapeCol $colName $forSelect)
+#set($dbKeywords=["ACCESS"])
+#set($javaKeywords=["NEW"])
+#if($dbKeywords.contains($colName.toUpperCase()))
+	"$colName"
+#elseif($javaKeywords.contains($colName.toUpperCase()) && $forSelect)
+	$colName as V_$colName
+#else
+	$colName
+#end
+#end
+
+## = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+##       Macro to escape a column named parameter.
+## = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+#macro( escapeParam $colName)
+#set($javaKeywords=["NEW"])
+#if($javaKeywords.contains($colName.toUpperCase()))
+	V_$colName
+#else
+	$colName
+#end
+#end

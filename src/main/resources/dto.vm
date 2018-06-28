@@ -1,0 +1,177 @@
+## = = = = = = = = = = = = = = = 
+##    DTO Java source template
+## = = = = = = = = = = = = = = = 
+##
+## Use for $ literal
+##
+#set($D = '$')
+##
+## Use for brace literals i.e. {}
+##
+#set($OB = '{')
+#set($CB = '}')
+##
+## Comment line separators for word wrap
+##
+#set($commentSepClass = ${lineSeparator} + " * ")
+#set($commentSepMethod = ${lineSeparator} + "	 * ")
+#set($methodCommentSeparator = ${lineSeparator} + "    ")
+/*
+ * Copyright (c) $DateTool.get('yyyy') Rothsmith, LLC, All rights reserved.
+ */
+package $dtoClassMetaData.getPackageName();
+##
+## Build import list
+##
+#foreach($packageName in $dtoClassMetaData.getPackageMap())
+import $packageName;
+#end
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+
+/**
+ * DTO generated from SQL statement.
+ *
+ * $WordUtils.wrap($dtoClassMetaData.getSelectSql(),77,$commentSepClass,true)
+ * .
+ *
+ * @author $dtoClassMetaData.getUser()
+ */
+public final class $dtoClassMetaData.getClassName() implements Serializable {
+
+    /** 
+    * Serial UID. 
+    */
+    private static final long serialVersionUID = ${serialVersionUID}L;
+	
+##
+## Get method metadata list and field metadata list
+##
+#set($dtoMethodMetaDataList = $dtoClassMetaData.getDtoMethodMetaDataList())
+#set($colMetaDataList = $dtoClassMetaData.getColMetaDataList())
+##
+## Generate unqualified member variables
+##
+#foreach($dtoMethodMetaData in $dtoMethodMetaDataList)
+##
+## Split fully qualified class name by "."
+##
+#set($classNameArr = $dtoMethodMetaData.getClassTypeName().split('\.'))
+##
+## Get just class name
+##
+#set($classPos = $classNameArr.size() - 1)
+#set($className = $classNameArr.get($classPos))
+##
+## Handle line wrapping for long field names
+##
+    /**
+    $WordUtils.wrap("* Member variable represents database field $colMetaDataList.get($velocityCount).getColumnName().",76,$commentSepMethod,true)
+    */
+    private $className $dtoMethodMetaData.getVarName();
+
+#end
+
+	/**
+	 * Default constructor.
+	 */
+	public $dtoClassMetaData.getClassName()() {
+		// Default constructor
+	}
+
+#set($argName = $dtoClassMetaData.getClassName().substring(0,1).toLowerCase()+$dtoClassMetaData.getClassName().substring(1))
+	/**
+	 * $WordUtils.wrap("Private constructor used by newInstance factory method to create a copy of another $dtoClassMetaData.getClassName() instance.",73,$commentSepMethod,true)
+	 *
+	 * @param ${argName} 
+	 *      an instance of another {@link $dtoClassMetaData.getClassName()} object.
+	 */
+	private $dtoClassMetaData.getClassName()(final $dtoClassMetaData.getClassName() ${argName}) {
+		
+	#foreach($dtoMethodMetaData in $dtoMethodMetaDataList)
+	$dtoMethodMetaData.getVarName() = ${argName}.get$dtoMethodMetaData.getMethodName()();
+	#end
+		
+	}
+	
+	/**
+	 * $WordUtils.wrap("Factory method to return a copy of the given $dtoClassMetaData.getClassName() instance.",73,$methodCommentSeparator,true)
+	 *
+	 * @param ${argName} 
+	 *      an instance of another {@link $dtoClassMetaData.getClassName()} object. 
+	 *
+	 * @return a copy of ${argName}.
+	 */
+	public static $dtoClassMetaData.getClassName() newInstance(
+			final $dtoClassMetaData.getClassName() ${argName}) {
+		return new $dtoClassMetaData.getClassName()(${argName});
+	}
+
+#foreach($dtoMethodMetaData in $dtoMethodMetaDataList)
+##
+## Split fully qualified class name by "."
+##
+#set($classNameArr = $dtoMethodMetaData.getClassTypeName().split('\.'))
+##
+## Get just class name
+##
+#set($classPos = $classNameArr.size() - 1)
+#set($className = $classNameArr.get($classPos))
+#set($varName = "var"+$dtoMethodMetaData.getVarName().substring(0,1).toUpperCase()+$dtoMethodMetaData.getVarName().substring(1))
+#set($varNamePlusClassName = "$varName$className")
+
+    /**
+     * Accessor for $dtoMethodMetaData.getVarName().
+     *
+     * @return $dtoMethodMetaData.getVarName() $className to get
+     */
+    public $className get$dtoMethodMetaData.getMethodName()() {
+        return $dtoMethodMetaData.getVarName();
+    }
+
+    /**
+     * Mutator for $dtoMethodMetaData.getVarName().
+     *
+     * @param $varName $className to set
+     */
+##
+## Handle line wrapping for long variable names
+##
+#if($varNamePlusClassName.length() < 30)
+    public void set$dtoMethodMetaData.getMethodName()(final $className $varName) {
+#else
+    public void set$dtoMethodMetaData.getMethodName()(
+            final $className $varName) {
+#end
+        $dtoMethodMetaData.getVarName() = $varName;
+    }
+#end
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this,
+				ToStringStyle.MULTI_LINE_STYLE);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override	
+	public boolean equals(final Object obj) {
+		return EqualsBuilder.reflectionEquals(this, obj);
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public int hashCode() {
+		return HashCodeBuilder.reflectionHashCode(this);
+	}
+	
+}

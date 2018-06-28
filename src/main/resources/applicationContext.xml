@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+  Application context definition for project's various layers.
+
+  Copyright (c) 2014 Rothsmith, LLC, All rights reserved.
+
+  Created by GenerateAppConfig on Dec 22, 2014 5:40:24 PM
+  Template used: $appConfigMetaData.getTemplateFileName()
+  Author: drothauser
+
+-->
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xmlns:aop="http://www.springframework.org/schema/aop"
+		xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="
+			http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+			http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+			http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
+
+    <bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="location" value="classpath:derby/daogen-derby.properties"/>
+    </bean>
+
+    <!--
+    Externalize properties in property file. The property file is not generated
+    to allow for extension without overwriting.
+    
+    <bean id="properties" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+        <property name="location" value="classpath:derby/daogen-derby.properties"/>
+    </bean>
+    -->
+
+    <!--
+    Generated DAO layer.
+    -->
+    <import resource="file:C:\workspaces\ora-ldap\daogen-parent\daogen\src\main\resources\dao.xml"/>
+
+    <!--
+    Local Apache Commons DBCP DataSource
+    -->
+    <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"
+          destroy-method="close">
+        <property name="url" value="${database.url}"/>
+        <property name="username" value="${database.userName}"/>
+        <property name="password" value="${database.password}"/>
+        <property name="driverClassName" value="${database.driverClassName}"/>
+    </bean>
+
+    <!--
+    JNDI DataSource. Uncomment to use and comment out local datasource.
+
+    <bean id="dataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+        <property name="jndiName" value="${db.jndi}" />
+    </bean>
+    -->
+
+    <!--
+    Transaction manager for JDBC datasource.
+    -->
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+
+</beans>

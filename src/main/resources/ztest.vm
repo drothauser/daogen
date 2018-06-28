@@ -1,0 +1,27 @@
+<statement id="insert">
+insert into $tblMetaData.getTableName() (
+#foreach($key in $daoMetaData.getColumnMap().keySet())
+#set($colMetaData=$daoMetaData.getColumnMap().get($key))
+#if(!$booleanUtils.toBoolean($colMetaData.IsAutoIncrement))
+$colMetaData.getColumnName()
+#if($velocityCount < $lastColumnNo),#end
+#end
+#end
+)values(
+#foreach($key in $daoMetaData.getColumnMap().keySet())
+#set($colMetaData=$daoMetaData.getColumnMap().get($key))
+#if(!$booleanUtils.toBoolean($colMetaData.IsAutoIncrement))
+:#set($paramName=$WordUtils.capitalizeFully($colMetaData.getJavaColumnName(),$delim).replaceAll("_", ""))$paramName.substring(0,1).toLowerCase()$paramName.substring(1)
+#if($velocityCount < $lastColumnNo), #end
+#end
+#end
+)
+</statement>
+
+<statement id="update">
+update $tblMetaData.getTableName() set 
+#foreach($key in $daoMetaData.getColumnMap().keySet())$daoMetaData.getColumnMap().get($key).getColumnName() = 
+:#set($paramName=$WordUtils.capitalizeFully($daoMetaData.getColumnMap().get($key).getJavaColumnName(),$delim).replaceAll("_", ""))$paramName.substring(0,1).toLowerCase()$paramName.substring(1)#if($velocityCount < $lastColumnNo), #end#end 
+where #foreach($key in $daoMetaData.getPkMap().keySet())$daoMetaData.getPkMap().get($key).getColumnName() = 
+:#set($paramName=$WordUtils.capitalizeFully($daoMetaData.getPkMap().get($key).getColumnName(),$delim).replaceAll("_", ""))$paramName.substring(0,1).toLowerCase()$paramName.substring(1)#if($key < $daoMetaData.getPkMap().size()) and #end#end
+</statement>

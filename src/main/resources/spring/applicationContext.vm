@@ -1,0 +1,67 @@
+##
+## Spring applicationContext template
+##
+## Use for $ literal
+##
+#set($D = '$')
+##
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+  Application context definition for project's various layers.
+
+  Copyright (c) $DateTool.get('yyyy') Rothsmith, LLC, All rights reserved.
+
+  Created by GenerateAppConfig on $DateTool
+  Template used: ${appCfgMetaData.getTemplateFileName()}
+  Author: ${appCfgMetaData.getUser()}
+
+-->
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xmlns:context="http://www.springframework.org/schema/context"
+		xmlns:aop="http://www.springframework.org/schema/aop"
+		xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="
+			http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.1.xsd
+			http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.1.xsd
+			http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.1.xsd
+			http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.1.xsd">
+
+    <bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="location" value="${appCfgMetaData.getPropsFile()}"/>
+    </bean>
+
+    <!--
+    Generated DAO layer.
+    -->
+    <import resource="classpath:${daoContextFile}"/>
+
+    <!--
+    Local Apache Commons DBCP DataSource
+    -->
+    <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"
+          destroy-method="close">
+        <property name="url" value="${D}{database.url}"/>
+        <property name="username" value="${D}{database.userName}"/>
+        <property name="password" value="${D}{database.password}"/>
+        <property name="driverClassName" value="${D}{database.driverClassName}"/>
+    </bean>
+
+    <!--
+    JNDI DataSource. Uncomment to use and comment out local datasource.
+
+    <bean id="dataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+        <property name="jndiName" value="${D}{db.jndi}" />
+    </bean>
+    -->
+
+    <!--
+    Transaction manager for JDBC datasource.
+    -->
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+
+</beans>

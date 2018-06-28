@@ -1,0 +1,33 @@
+            ------
+            DAO Generator
+            ------
+            Doug Rothauser
+            ------
+            2010-05-01
+            
+Data Access Object Generator
+
+  This project provides programs for generating data access components from database objects and ad-hoc SQL statements.
+  
+    <<Table of Contents:>>
+
+%{toc|section=1|fromDepth=2}
+
+* Running
+  
+* Supporting Projects
+
+** SimpleJNDI
+	
+	{{https://code.google.com/p/osjava/wiki/SimpleJNDI}}
+	
+	Used to provide JNDI support for database access using JDBC.
+	
+** Unitils
+
+	{{http://unitils.org/tutorial-database.html}}
+	
+	Used to provide transactional support for JUnit tests.  
+	
+  
+

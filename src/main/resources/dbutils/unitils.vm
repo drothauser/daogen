@@ -1,0 +1,17 @@
+##
+## Unitils Properties File Template
+##
+## Use for $ literal
+##
+#set($D = '$')
+##
+#  Unitils Properties
+#
+#  Copyright (c) $DateTool.get('yyyy') Rothsmith, LLC, All rights reserved.
+#
+#  Generated on $DateTool 
+#
+database.url=${jdbcUrl}
+database.driverClassName=${jdbcDriver}
+database.userName=${dbUsername}
+database.password=${dbPassword}

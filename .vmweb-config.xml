@@ -1,0 +1,33 @@
+<config>
+	<context-values>
+		<resource path="src/main/resources/daodefs.vm">
+			<value key="defMetaData" object-class="com.rothsmith.dao.def.DefMetaData"/>
+			<value key="params" object-class="com.rothsmith.dao.core.Params"/>
+			<value key="StringUtils" object-class="org.apache.commons.lang3.StringUtils"/>
+		</resource>
+		<resource path="src/main/resources/dto.vm">
+			<value key="dtoClassMetaData" object-class="com.rothsmith.dao.dto.DtoClassMetaData"/>
+			<value key="dtoMethodMetaData" object-class="com.rothsmith.dao.dto.DtoMethodMetaData"/>
+			<value key="colMetaDataList" object-class="com.rothsmith.dao.db.SelectMetaData"/>
+		</resource>
+		<resource path="src/main/resources/sqldef.vm">
+			<value key="params" object-class="com.rothsmith.dao.core.Params"/>
+			<value key="defMetaData" object-class="com.rothsmith.dao.def.DefMetaData"/>
+		</resource>
+		<resource path="src/main/resources/dbutils/junit.vm">
+			<value key="dtoClassMetaData" object-class="com.rothsmith.dao.dto.DtoClassMetaData"/>
+			<value key="dtoMethodMetaData" object-class="com.rothsmith.dao.dto.DtoMethodMetaData"/>
+			<value key="daoCfgMetaData" object-class="com.rothsmith.dao.spring.DaoCfgMetaData"/>
+			<value key="StringUtils" object-class="org.apache.commons.lang3.StringUtils"/>
+		</resource>
+		<resource path="src/main/resources/spring/junit.vm">
+			<value key="StringUtils" object-class="org.apache.commons.lang3.StringUtils"/>
+		</resource>
+		<resource path="src/main/resources/dbutils/unitils.vm">
+			<value key="propsMetaData" object-class="com.rothsmith.dao.dbutils.PropsMetaData"/>
+		</resource>
+		<resource path="src/main/resources/dbutils/propsfile.vm">
+			<value key="propsMetaData" object-class="com.rothsmith.dao.dbutils.PropsMetaData"/>
+		</resource>
+	</context-values>
+</config>
