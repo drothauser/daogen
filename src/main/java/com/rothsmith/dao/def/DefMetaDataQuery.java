@@ -9,8 +9,6 @@ import java.util.List;
 
 import javax.sql.DataSource;
 
-import com.rothsmith.dao.core.Params;
-import com.rothsmith.dao.core.TextUtils;
 import com.rothsmith.dao.db.DbMetaDataQueryParams;
 import com.rothsmith.dao.db.DbMetaDataQueryParamsBuilder;
 import com.rothsmith.dao.db.IdxMetaDataQuery;
@@ -18,6 +16,9 @@ import com.rothsmith.dao.db.PKMetaDataQuery;
 import com.rothsmith.dao.db.TblColMetaDataQuery;
 import com.rothsmith.dao.db.TblMetaData;
 import com.rothsmith.dao.db.TblMetaDataQuery;
+
+import net.rothsmith.dao.core.Params;
+import net.rothsmith.dao.core.TextUtils;
 
 /**
  * Retrieves information used to generate DAO artifacts (for example package

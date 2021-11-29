@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2014 Rothsmith, LLC, All rights reserved.
  */
-package com.rothsmith.dao.core;
+package net.rothsmith.dao.core;
 
 import java.io.BufferedWriter;
 import java.io.FileOutputStream;

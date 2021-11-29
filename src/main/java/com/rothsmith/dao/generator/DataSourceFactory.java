@@ -13,9 +13,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.rothsmith.dao.core.GeneratorException;
-import com.rothsmith.dao.core.Params;
 import com.rothsmith.utils.database.JDBCServiceLocator;
+
+import net.rothsmith.dao.core.GeneratorException;
+import net.rothsmith.dao.core.Params;
 
 /**
  * Factory for creating a {@link DataSource} object with the given parameters.

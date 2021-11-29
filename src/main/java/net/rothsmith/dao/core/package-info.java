@@ -3,4 +3,4 @@
  * 
  * @author drothauser
  */
-package com.rothsmith.dao.core;
+package net.rothsmith.dao.core;

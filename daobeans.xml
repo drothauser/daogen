@@ -22,7 +22,7 @@
 			http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.1.xsd
 			http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.1.xsd">
 
-    <bean id="presidentDao" class="com.rothsmith.dao.spring.NamedParamJdbcTemplateDao">
+    <bean id="presidentDao" class="net.rothsmith.dao.spring.NamedParamJdbcTemplateDao">
         <constructor-arg value ="com.fcci.president.PresidentDto"/>
         <property name="dataSource" ref="dataSource"/>
         <property name="statementMap">

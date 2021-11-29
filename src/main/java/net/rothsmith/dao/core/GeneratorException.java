@@ -1,10 +1,10 @@
 /*
  * (c) 2013 Rothsmith, LLC All Rights Reserved.
  */
-package com.rothsmith.dao.core;
+package net.rothsmith.dao.core;
 
 /**
- * {@link com.rothsmith.dao.spring.core.ArtifactGenerator} checked exception.
+ * {@link net.rothsmith.dao.spring.core.ArtifactGenerator} checked exception.
  * 
  * @author drothauser
  * 

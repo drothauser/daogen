@@ -1,7 +1,7 @@
 /*
  * (c) 2014 Rothsmith, LLC All Rights Reserved.
  */
-package com.rothsmith.dao.db;
+package net.rothsmith.dao.db;
 
 import static org.junit.Assert.assertEquals;
 

@@ -33,7 +33,7 @@
 ##
 #foreach($daoCfgMetaData in $daoCfgMetaDataList)
 
-    <bean id="$daoCfgMetaData.getClassName().substring(0,1).toLowerCase()$daoCfgMetaData.getClassName().substring(1)" class="com.rothsmith.dao.spring.NamedParamJdbcTemplateDao">
+    <bean id="$daoCfgMetaData.getClassName().substring(0,1).toLowerCase()$daoCfgMetaData.getClassName().substring(1)" class="net.rothsmith.dao.spring.NamedParamJdbcTemplateDao">
 ##
 ## If DAO metadata has null DTO metadata use Object array instead.
 ##

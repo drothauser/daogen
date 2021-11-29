@@ -21,15 +21,16 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.rothsmith.dao.core.ArtifactGenerator;
-import com.rothsmith.dao.core.GeneratorException;
-import com.rothsmith.dao.core.VelocityGenerator;
 import com.rothsmith.dao.def.DefGenerator;
 import com.rothsmith.dao.dto.DtoGenerator;
 import com.rothsmith.dao.spring.AppCfgArtifactGenerator;
 import com.rothsmith.dao.spring.DaoCfgArtifactGenerator;
 import com.rothsmith.dao.spring.SpringArtifactGenerator;
 import com.rothsmith.dao.spring.SpringJunitGenerator;
+
+import net.rothsmith.dao.core.ArtifactGenerator;
+import net.rothsmith.dao.core.GeneratorException;
+import net.rothsmith.dao.core.VelocityGenerator;
 
 /**
  * Tests for {@link SpringArtifactGenerator}.

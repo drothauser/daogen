@@ -20,14 +20,15 @@ import org.jdom2.JDOMException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.rothsmith.dao.core.ArtifactGenerator;
-import com.rothsmith.dao.core.GeneratorException;
-import com.rothsmith.dao.core.TextUtils;
-import com.rothsmith.dao.core.VelocityGenerator;
 import com.rothsmith.dao.db.DbMetaDataQueryParams;
 import com.rothsmith.dao.db.DbMetaDataQueryParamsBuilder;
 import com.rothsmith.dao.db.SelectDataQuery;
 import com.rothsmith.dao.db.SelectMetaData;
+
+import net.rothsmith.dao.core.ArtifactGenerator;
+import net.rothsmith.dao.core.GeneratorException;
+import net.rothsmith.dao.core.TextUtils;
+import net.rothsmith.dao.core.VelocityGenerator;
 
 /**
  * Class to generate DTOs from the DAO definitions file.

@@ -7,11 +7,12 @@ import javax.sql.DataSource;
 
 import org.jdom2.Document;
 
-import com.rothsmith.dao.core.ArtifactGenerator;
-import com.rothsmith.dao.core.GeneratorException;
-import com.rothsmith.dao.core.Params;
-import com.rothsmith.dao.core.VelocityGenerator;
 import com.rothsmith.dao.def.DefGenerator;
+
+import net.rothsmith.dao.core.ArtifactGenerator;
+import net.rothsmith.dao.core.GeneratorException;
+import net.rothsmith.dao.core.Params;
+import net.rothsmith.dao.core.VelocityGenerator;
 
 /**
  * Runs a DAO generator.

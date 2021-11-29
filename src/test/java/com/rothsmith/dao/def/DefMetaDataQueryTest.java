@@ -44,7 +44,7 @@ public class DefMetaDataQueryTest
 
 	/**
 	 * Test method for
-	 * {@link DefMetaDataQuery#fetchMetaData(com.rothsmith.dao.core.Params)} .
+	 * {@link DefMetaDataQuery#fetchMetaData(net.rothsmith.dao.core.Params)} .
 	 * 
 	 * @throws SQLException
 	 *             possible database error
@@ -59,7 +59,7 @@ public class DefMetaDataQueryTest
 
 	/**
 	 * Test method for
-	 * {@link DefMetaDataQuery#fetchMetaData(com.rothsmith.dao.core.Params)} with an
+	 * {@link DefMetaDataQuery#fetchMetaData(net.rothsmith.dao.core.Params)} with an
 	 * invalid datasource.
 	 * 
 	 * @throws SQLException
@@ -73,7 +73,7 @@ public class DefMetaDataQueryTest
 
 	/**
 	 * Test method for
-	 * {@link DefMetaDataQuery#fetchMetaData(com.rothsmith.dao.core.Params)} with an
+	 * {@link DefMetaDataQuery#fetchMetaData(net.rothsmith.dao.core.Params)} with an
 	 * invalid datasource.
 	 * 
 	 * @throws SQLException
@@ -88,7 +88,7 @@ public class DefMetaDataQueryTest
 
 	/**
 	 * Test method for
-	 * {@link DefMetaDataQuery#fetchMetaData(com.rothsmith.dao.core.Params)} with an
+	 * {@link DefMetaDataQuery#fetchMetaData(net.rothsmith.dao.core.Params)} with an
 	 * invalid datasource.
 	 * 
 	 * @throws SQLException

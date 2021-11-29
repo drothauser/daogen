@@ -85,8 +85,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import $daoCfgMetaData.getPackageName().$dtoClassName;
-import com.rothsmith.dao.JdbcDao;
-import com.rothsmith.dao.dbutils.DbUtilsJdbcDao;
+import net.rothsmith.dao.JdbcDao;
+import net.rothsmith.dao.dbutils.DbUtilsJdbcDao;
 import org.unitils.UnitilsJUnit4TestClassRunner;
 import org.unitils.database.DatabaseUnitils;
 import org.unitils.database.annotations.Transactional;

@@ -22,9 +22,10 @@ import org.junit.Before;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.rothsmith.dao.core.Params;
-import com.rothsmith.dao.core.ParamsBuilder;
 import com.rothsmith.dao.dbutils.BaseDbUtilsTest;
+
+import net.rothsmith.dao.core.Params;
+import net.rothsmith.dao.core.ParamsBuilder;
 
 /**
  * Class that provides @BeforeClass and @Before methods for creating database

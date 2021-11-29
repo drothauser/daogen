@@ -3,15 +3,16 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
-		<groupId>com.rothsmith</groupId>
-		<version>1.2.0-SNAPSHOT</version>
-		<artifactId>rothsmith-common</artifactId>
+		<groupId>net.rothsmith</groupId>
+		<artifactId>rothsmith-parent</artifactId>
+		<version>1</version>
 	</parent>
 	<artifactId>daogen</artifactId>
 
 	<description>Project for generating DAOs.</description>
 
 	<properties>
+		<revision>1.0.0</revision>
 		<checkstyle.config>${basedir}/checkstyle_checks.xml</checkstyle.config>
 		<pmd.rulesfile>${basedir}/pmdrules.xml</pmd.rulesfile>
 	</properties>
@@ -35,13 +36,11 @@
 		</dependency>
 		<dependency>
 			<groupId>org.jdom</groupId>
-			<artifactId>jdom2</artifactId>
-			<version>2.0.5</version>
+			<artifactId>jdom2</artifactId>			
 		</dependency>
 		<dependency>
 			<groupId>jaxen</groupId>
 			<artifactId>jaxen</artifactId>
-			<version>1.1.6</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-dbutils</groupId>
@@ -51,8 +50,7 @@
 			Utility APIs (org.springframework.core.*/org.springframework.util.*) -->
 		<dependency>
 			<groupId>org.springframework</groupId>
-			<artifactId>spring-core</artifactId>
-			<version>${org.springframework.version}</version>
+			<artifactId>spring-core</artifactId>			
 		</dependency>
 
 		<!-- Expression Language (depends on spring-core) Define this if you use 
@@ -60,7 +58,6 @@
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-expression</artifactId>
-			<version>${org.springframework.version}</version>
 		</dependency>
 
 		<!-- Bean Factory and JavaBeans utilities (depends on spring-core) Define 
@@ -68,7 +65,6 @@
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-beans</artifactId>
-			<version>${org.springframework.version}</version>
 		</dependency>
 
 		<!-- Aspect Oriented Programming (AOP) Framework (depends on spring-core, 
@@ -76,7 +72,6 @@
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-aop</artifactId>
-			<version>${org.springframework.version}</version>
 		</dependency>
 
 		<!-- Application Context (depends on spring-core, spring-expression, spring-aop, 
@@ -85,7 +80,6 @@
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-context</artifactId>
-			<version>${org.springframework.version}</version>
 		</dependency>
 
 		<!-- Various Application Context utilities, including EhCache, JavaMail, 
@@ -93,7 +87,6 @@
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-context-support</artifactId>
-			<version>${org.springframework.version}</version>
 		</dependency>
 
 		<!-- Transaction Management Abstraction (depends on spring-core, spring-beans, 
@@ -102,7 +95,6 @@
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-tx</artifactId>
-			<version>${org.springframework.version}</version>
 		</dependency>
 
 		<!-- JDBC Data Access Library (depends on spring-core, spring-beans, spring-context, 
@@ -110,7 +102,6 @@
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-jdbc</artifactId>
-			<version>${org.springframework.version}</version>
 		</dependency>
 
 		<!-- Object-to-Relation-Mapping (ORM) integration with Hibernate, JPA, 
@@ -119,7 +110,6 @@
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-orm</artifactId>
-			<version>${org.springframework.version}</version>
 		</dependency>
 
 		<!-- Object-to-XML Mapping (OXM) abstraction and integration with JAXB, 
@@ -128,7 +118,6 @@
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-oxm</artifactId>
-			<version>${org.springframework.version}</version>
 		</dependency>
 
 		<!-- Support for testing Spring applications with tools such as JUnit and 
@@ -137,7 +126,6 @@
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-test</artifactId>
-			<version>${org.springframework.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -167,8 +155,8 @@
 			</exclusions>
 		</dependency>
 		<dependency>
-			<groupId>com.oracle</groupId>
-			<artifactId>ojdbc6</artifactId>
+			<groupId>com.oracle.database.jdbc</groupId>
+			<artifactId>ojdbc8</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>commons-dbcp</groupId>
@@ -182,7 +170,6 @@
 		<dependency>
 			<groupId>org.apache.derby</groupId>
 			<artifactId>derby</artifactId>
-			<version>10.11.1.1</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -208,19 +195,17 @@
 			<version>0.11.4.1</version>
 		</dependency>
 		<dependency>
-			<groupId>com.rothsmith</groupId>
+			<groupId>net.rothsmith</groupId>
 			<artifactId>genericdao-spring</artifactId>
 			<version>1.0.0-SNAPSHOT</version>
 		</dependency>
 		<dependency>
-			<groupId>com.rothsmith</groupId>
+			<groupId>net.rothsmith</groupId>
 			<artifactId>genericdao-dbutils</artifactId>
-			<version>1.0.0-SNAPSHOT</version>
 		</dependency>
 		<dependency>
-			<groupId>com.rothsmith</groupId>
+			<groupId>net.rothsmith</groupId>
 			<artifactId>rothsmith-database</artifactId>
-			<version>1.0.0-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.unitils</groupId>
@@ -241,7 +226,6 @@
 		<dependency>
 			<groupId>javax.validation</groupId>
 			<artifactId>validation-api</artifactId>
-			<version>1.1.0.Final</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.bval</groupId>

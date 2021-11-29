@@ -6,7 +6,7 @@
  * http://code.google.com/p/fluent-builders-generator-eclipse-plugin/
  */
 // CHECKSTYLE:OFF
-package com.rothsmith.dao.core;
+package net.rothsmith.dao.core;
 
 // CHECKSTYLE:ON
 

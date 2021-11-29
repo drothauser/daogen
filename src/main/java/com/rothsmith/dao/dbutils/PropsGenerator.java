@@ -17,9 +17,9 @@ import org.jdom2.JDOMException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.rothsmith.dao.core.ArtifactGenerator;
-import com.rothsmith.dao.core.GeneratorException;
-import com.rothsmith.dao.core.VelocityGenerator;
+import net.rothsmith.dao.core.ArtifactGenerator;
+import net.rothsmith.dao.core.GeneratorException;
+import net.rothsmith.dao.core.VelocityGenerator;
 
 /**
  * This class generates a properties file containing SQL statements for Apache

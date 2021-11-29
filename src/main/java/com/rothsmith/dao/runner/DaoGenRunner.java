@@ -14,10 +14,11 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.rothsmith.dao.core.GeneratorException;
-import com.rothsmith.dao.core.Params;
-import com.rothsmith.dao.core.ParamsBuilder;
 import com.rothsmith.dao.generator.DaoGenerator;
+
+import net.rothsmith.dao.core.GeneratorException;
+import net.rothsmith.dao.core.Params;
+import net.rothsmith.dao.core.ParamsBuilder;
 
 /**
  * Java application that launches {@link DaoGenerator} using the given command
@@ -116,7 +117,7 @@ public final class DaoGenRunner {
 			LOGGER.error(e.getMessage());
 			HelpFormatter formatter = new HelpFormatter();
 			formatter.printHelp("java -cp .;daogen.jar;lib/* "
-			    + "com.rothsmith.dao.runner.DaoGenRunner", options);
+			    + "net.rothsmith.dao.runner.DaoGenRunner", options);
 		}
 
 	}

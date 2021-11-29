@@ -23,17 +23,18 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.rothsmith.dao.core.ArtifactGenerator;
-import com.rothsmith.dao.core.GeneratorException;
-import com.rothsmith.dao.core.Params;
-import com.rothsmith.dao.core.ParamsBuilder;
-import com.rothsmith.dao.core.VelocityGenerator;
 import com.rothsmith.dao.dbutils.DbUtilsArtifactGenerator;
 import com.rothsmith.dao.dbutils.DbUtilsJunitGenerator;
 import com.rothsmith.dao.dbutils.PropsGenerator;
 import com.rothsmith.dao.dbutils.UnitilsGenerator;
 import com.rothsmith.dao.def.DefGenerator;
 import com.rothsmith.dao.dto.DtoGenerator;
+
+import net.rothsmith.dao.core.ArtifactGenerator;
+import net.rothsmith.dao.core.GeneratorException;
+import net.rothsmith.dao.core.Params;
+import net.rothsmith.dao.core.ParamsBuilder;
+import net.rothsmith.dao.core.VelocityGenerator;
 
 /**
  * Tests for {@link DbUtilsArtifactGenerator}.

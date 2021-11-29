@@ -84,7 +84,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.unitils.database.DatabaseUnitils;
 
 import $daoCfgMetaData.getPackageName().$dtoClassName;
-import com.rothsmith.dao.spring.NamedParamJdbcTemplateDao;
+import net.rothsmith.dao.spring.NamedParamJdbcTemplateDao;
 
 /**
  * Test for the $daoVarName generic DAO (Spring bean).

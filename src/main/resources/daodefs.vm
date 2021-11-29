@@ -5,7 +5,7 @@
 
   Copyright (c) $DateTool.get('yyyy') Rothsmith, LLC, All rights reserved.
 
-  Created by com.rothsmith.dao.def.DefGenerator on $DateTool
+  Created by net.rothsmith.dao.def.DefGenerator on $DateTool
 
 -->
 <daos>

@@ -26,12 +26,6 @@ import org.junit.runners.Parameterized;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.rothsmith.dao.core.ArtifactGenerator;
-import com.rothsmith.dao.core.GeneratorException;
-import com.rothsmith.dao.core.Params;
-import com.rothsmith.dao.core.ParamsBuilder;
-import com.rothsmith.dao.core.TextUtils;
-import com.rothsmith.dao.core.VelocityGenerator;
 import com.rothsmith.dao.db.DbMetaDataQueryParams;
 import com.rothsmith.dao.db.DbMetaDataQueryParamsBuilder;
 import com.rothsmith.dao.db.IdxMetaData;
@@ -48,6 +42,13 @@ import com.rothsmith.dao.spring.AppCfgArtifactGenerator;
 import com.rothsmith.dao.spring.DaoCfgArtifactGenerator;
 import com.rothsmith.dao.spring.SpringArtifactGenerator;
 import com.rothsmith.dao.spring.SpringJunitGenerator;
+
+import net.rothsmith.dao.core.ArtifactGenerator;
+import net.rothsmith.dao.core.GeneratorException;
+import net.rothsmith.dao.core.Params;
+import net.rothsmith.dao.core.ParamsBuilder;
+import net.rothsmith.dao.core.TextUtils;
+import net.rothsmith.dao.core.VelocityGenerator;
 
 /**
  * Test for generating the Spring Junit test classes.

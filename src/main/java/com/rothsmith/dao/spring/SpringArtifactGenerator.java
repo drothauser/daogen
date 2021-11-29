@@ -11,10 +11,11 @@ import javax.sql.DataSource;
 
 import org.jdom2.Document;
 
-import com.rothsmith.dao.core.ArtifactGenerator;
-import com.rothsmith.dao.core.GeneratorException;
-import com.rothsmith.dao.core.VelocityGenerator;
 import com.rothsmith.dao.dto.DtoGenerator;
+
+import net.rothsmith.dao.core.ArtifactGenerator;
+import net.rothsmith.dao.core.GeneratorException;
+import net.rothsmith.dao.core.VelocityGenerator;
 
 /**
  * Class for generating all the various types of Spring DAO artifacts. Note that

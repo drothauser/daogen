@@ -16,7 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 
-import com.rothsmith.dao.core.Params;
+import net.rothsmith.dao.core.Params;
 
 /**
  * Class that provides @BeforeClass and @Before methods for creating database

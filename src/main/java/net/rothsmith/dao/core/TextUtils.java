@@ -1,7 +1,7 @@
 /*
  * (c) 2014 Rothsmith, LLC, All Rights Reserved
  */
-package com.rothsmith.dao.core;
+package net.rothsmith.dao.core;
 
 import java.io.File;
 import java.math.BigDecimal;

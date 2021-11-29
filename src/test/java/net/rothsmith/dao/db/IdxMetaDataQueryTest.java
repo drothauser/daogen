@@ -1,12 +1,13 @@
 /*
  * (c) 2014 Rothsmith, LLC All Rights Reserved.
  */
-package com.rothsmith.dao.db;
+package net.rothsmith.dao.db;
 
 import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Map;
 
 import org.junit.BeforeClass;
@@ -16,24 +17,24 @@ import org.slf4j.LoggerFactory;
 
 import com.rothsmith.dao.db.DbMetaDataQueryParams;
 import com.rothsmith.dao.db.DbMetaDataQueryParamsBuilder;
-import com.rothsmith.dao.db.PKMetaData;
-import com.rothsmith.dao.db.PKMetaDataQuery;
+import com.rothsmith.dao.db.IdxMetaData;
+import com.rothsmith.dao.db.IdxMetaDataQuery;
 import com.rothsmith.dao.spring.BaseSpringTest;
 
 /**
- * Tests for getting Primary Key information from a table.
+ * Tests for getting index information from a table.
  * 
  * @author drothauser
  *
  */
-public class PrimaryKeyMetaDataQueryTest
+public class IdxMetaDataQueryTest
         extends BaseSpringTest {
 
 	/**
-	 * SLF4J Logger for PrimaryKeyMetaDataTest.
+	 * SLF4J Logger for IdxMetaDataQueryTest.
 	 */
-	private static final Logger LOGGER =
-	    LoggerFactory.getLogger(PrimaryKeyMetaDataQueryTest.class);
+	public static final Logger LOGGER =
+	    LoggerFactory.getLogger(IdxMetaDataQueryTest.class);
 
 	/**
 	 * Create database objects for testing.
@@ -51,73 +52,77 @@ public class PrimaryKeyMetaDataQueryTest
 	}
 
 	/**
-	 * Test method for {@link PKMetaData#fetchMetaData(DbMetaDataQueryParams)}.
+	 * Test method for
+	 * {@link IdxMetaDataQuery#fetchMetaData(DbMetaDataQueryParams)}.
 	 * 
 	 * @throws SQLException
 	 *             possible SQL problem
 	 */
 	@Test
-	public void testCommentPKMetaData() throws SQLException {
+	public void testFetchMetaData1Index() throws SQLException {
 		String namePattern = "STATE";
 		DbMetaDataQueryParams params = DbMetaDataQueryParamsBuilder
 		    .metaDataQueryParams().withDataSource(dataSource)
 		    .withSchemaPattern("TEST").withTableNames(namePattern).build();
 
-		PKMetaDataQuery metaDataQuery = new PKMetaDataQuery();
-		Map<Integer, PKMetaData> metaData = metaDataQuery.fetchMetaData(params);
-
-		assertEquals(1, metaData.size());
+		IdxMetaDataQuery idxMetaDataQuery = new IdxMetaDataQuery();
+		Map<String, List<IdxMetaData>> metaData =
+		    idxMetaDataQuery.fetchMetaData(params);
 
 		metaData.entrySet().forEach(md -> LOGGER.info(String
-		    .format("%nKey Sequence: %d%n%s", md.getKey(), md.getValue())));
+		    .format("%nKey Sequence: %s%n%s", md.getKey(), md.getValue())));
+
+		assertEquals(1, metaData.size());
 
 	}
 
 	/**
-	 * Test method for {@link PKMetaData#fetchMetaData(DbMetaDataQueryParams)}
-	 * for a table with a composite primary key.
+	 * Test method for
+	 * {@link IdxMetaDataQuery#fetchMetaData(DbMetaDataQueryParams)} for a table
+	 * with two indexes - one for the primary key and the other for a column.
 	 * 
 	 * @throws SQLException
 	 *             possible SQL problem
 	 */
 	@Test
-	public void testPersonPKMetaData() throws SQLException {
+	public void testFetchMetaData2Indexes() throws SQLException {
 		String namePattern = "PRESIDENT";
 		DbMetaDataQueryParams params = DbMetaDataQueryParamsBuilder
 		    .metaDataQueryParams().withDataSource(dataSource)
 		    .withSchemaPattern("TEST").withTableNames(namePattern).build();
 
-		PKMetaDataQuery metaDataQuery = new PKMetaDataQuery();
-		Map<Integer, PKMetaData> metaData = metaDataQuery.fetchMetaData(params);
+		IdxMetaDataQuery metaDataQuery = new IdxMetaDataQuery();
+		Map<String, List<IdxMetaData>> metaData =
+		    metaDataQuery.fetchMetaData(params);
 
-		assertEquals(2, metaData.size());
+		metaData.entrySet().forEach(md -> LOGGER.info(
+		    String.format("%nIndex Name: %s%n%s", md.getKey(), md.getValue())));
 
-		for (Map.Entry<Integer, PKMetaData> pkEntry : metaData.entrySet()) {
-			Integer key = pkEntry.getKey();
-			PKMetaData pKMetaData = pkEntry.getValue();
-			LOGGER.info(String.format("%nKey Sequence: %d%nKey Data:%n%s", key,
-			    pKMetaData));
-		}
+		// CHECKSTYLE:OFF Magic number 3 ok here
+		assertEquals(5, metaData.size());
+		// CHECKSTYLE:ON
 
 	}
 
 	/**
-	 * Test method for {@link PKMetaData#fetchMetaData(DbMetaDataQueryParams)}
-	 * giving two table names. This will cause the expected
-	 * IllegalArgumentException to be thrown.
+	 * Test method for
+	 * {@link IdxMetaDataQuery#fetchMetaData(DbMetaDataQueryParams)} giving two
+	 * table names. This will cause the expected IllegalArgumentException to be
+	 * thrown.
 	 * 
 	 * @throws SQLException
 	 *             possible SQL problem
 	 */
 	@Test(expected = IllegalArgumentException.class)
 	public void testFetchMetaData2Tables() throws SQLException {
-		String namePattern = "STATE, PARTY";
+		String namePattern = "STATE,PRESIDENTS_VIEW";
 		DbMetaDataQueryParams params =
 		    DbMetaDataQueryParamsBuilder.metaDataQueryParams()
 		        .withDataSource(dataSource).withTableNames(namePattern).build();
 
-		PKMetaDataQuery metaDataQuery = new PKMetaDataQuery();
+		IdxMetaDataQuery metaDataQuery = new IdxMetaDataQuery();
 		metaDataQuery.fetchMetaData(params);
+
 	}
 
 }

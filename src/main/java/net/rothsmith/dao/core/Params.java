@@ -1,7 +1,7 @@
 /*
  * (c) 2009 Rothsmith, LLC, All Rights Reserved
  */
-package com.rothsmith.dao.core;
+package net.rothsmith.dao.core;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;

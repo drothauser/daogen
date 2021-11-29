@@ -22,10 +22,11 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.rothsmith.dao.core.VelocityGenerator;
 import com.rothsmith.dao.def.DefGenerator;
 import com.rothsmith.dao.dto.DtoGenerator;
 import com.rothsmith.dao.spring.BaseSpringTest;
+
+import net.rothsmith.dao.core.VelocityGenerator;
 
 /**
  * Test {@link DtoGenerator}.

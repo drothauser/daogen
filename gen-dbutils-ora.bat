@@ -3,7 +3,7 @@ setlocal
 
 cd target
 
-REM java -cp .;daogen-1.0.1-SNAPSHOT.jar;lib/*; com.rothsmith.dao.runner.DaoGenRunner ^
+REM java -cp .;daogen-1.0.1-SNAPSHOT.jar;lib/*; net.rothsmith.dao.runner.DaoGenRunner ^
 REM --jdbcurl jdbc:oracle:thin:@ldap://oradsqa.fcci-group.com:10389/dv01,cn=OracleContext,dc=fcci-group,dc=com ^
 REM --dbuser shareduser ^
 REM --dbpassword shareduser ^
@@ -34,7 +34,7 @@ java -cp .;daogen.jar;lib/*; ^
 -XX:+FlightRecorder ^
 -XX:FlightRecorderOptions=defaultrecording=true,dumponexit=true,dumponexitpath=daogen.jfr ^
 %DEBUG% ^
-com.rothsmith.dao.runner.DaoGenRunner ^
+net.rothsmith.dao.runner.DaoGenRunner ^
 --dbpassword=SHAREDUSER ^
 --dbuser=SHAREDUSER ^
 --deffile=/workspaces/daogen/wb-web-security/src/main/resources/daodefs.xml ^

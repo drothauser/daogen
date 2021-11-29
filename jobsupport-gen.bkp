@@ -5,7 +5,7 @@ if /I "%1" EQU "DEBUG" set DEBUG=-agentlib:jdwp=transport=dt_socket,server=n,sus
 
 cd target
 
-REM java -cp .;daogen-1.0.1-SNAPSHOT.jar;lib/*; com.rothsmith.dao.runner.DaoGenRunner ^
+REM java -cp .;daogen-1.0.1-SNAPSHOT.jar;lib/*; net.rothsmith.dao.runner.DaoGenRunner ^
 REM -XX:+UnlockCommercialFeatures ^
 REM -XX:+FlightRecorder ^
 REM -XX:FlightRecorderOptions=defaultrecording=true,dumponexit=true,dumponexitpath=daogen.jfr ^
@@ -35,7 +35,7 @@ REM --sqlStmts=select a.useridcode, c.USERID, d.FIRSTNAME, d.LASTNAME, a.GROUPID
 
 
 java -cp .;daogen.jar;lib/*; ^
-com.rothsmith.dao.runner.DaoGenRunner ^
+net.rothsmith.dao.runner.DaoGenRunner ^
 --dbpassword=jobsched ^
 --dbuser=jobsched ^
 --deffile=/workspaces/daogen/jobsupport/src/main/resources/daodefs.xml ^
